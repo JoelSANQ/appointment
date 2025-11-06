@@ -12,7 +12,7 @@
             <i class="fa-solid fa-plus"></i>
             Nuevo
         </x-wire-button>
-    </x-slot>
+    </x-slot>jeded
 
     @livewire('admin.datatables.role-table')
 

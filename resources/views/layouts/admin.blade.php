@@ -19,6 +19,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://kit.fontawesome.com/e9e74fca35.js" crossorigin="anonymous"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     {{-- WireUI --}}
     <wireui:scripts />
 
@@ -43,5 +45,14 @@
 
 @livewireScripts
 <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
+@if (@session('swal'))
+    <script>
+        Swal.fire(@json('swal'));
+    </script>
+@endif
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 </body>
 </html>
