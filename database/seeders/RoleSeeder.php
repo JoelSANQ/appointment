@@ -19,7 +19,11 @@ class RoleSeeder extends Seeder
             'Paciente',
             'Doctor',
             'Recepcionista',
+<<<<<<< HEAD
             'Administrador'
+=======
+            'Administrador',
+>>>>>>> 463f42e (feat(roles): complete CRUD workflow with edit restrictions and delete confirmation)
         ];
 
         // Crear en la BD
