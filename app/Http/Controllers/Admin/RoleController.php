@@ -8,33 +8,56 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-    /** IDs protegidos: 1..4 */
-    protected function isProtected(Role $role): bool
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
     {
-        return (int) $role->id <= 4;
+        return view('admin.roles.index');
     }
 
-    public function index() { return view('admin.roles.index'); }
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        return view('admin.roles.create');
+    }
 
-    public function create() { return view('admin.roles.create'); }
-
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255|unique:roles,name',
         ]);
 
-        Role::create(['name' => $data['name'], 'guard_name' => 'web']);
+        Role::create([
+            'name' => $request->name,
+            'guard_name' => 'web'
+        ]);
 
         session()->flash('swal', [
             'icon'  => 'success',
-            'title' => 'Rol creado',
-            'text'  => 'El rol se creó correctamente.',
+            'title' => 'Role Created Successfully',
+            'text'  => 'El rol ha sido creado correctamente.',
         ]);
 
-        return redirect()->route('admin.roles.index');
+        return redirect()->route('admin.roles.index')->with('success', 'Rol creado correctamente.');
     }
 
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit(string $id)
     {
         $role = Role::findOrFail($id);
@@ -51,8 +74,16 @@ class RoleController extends Controller
         return view('admin.roles.edit', compact('role'));
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            // ignora el ID actual para el unique
+            'name' => 'required|string|max:255|unique:roles,name,' . $id,
+        ]);
+
         $role = Role::findOrFail($id);
 
         if ($this->isProtected($role)) {
@@ -64,30 +95,14 @@ class RoleController extends Controller
             return redirect()->route('admin.roles.index');
         }
 
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
-        ]);
+        $role->update($request->only('name'));
 
-        if ($role->name === $request->name) {
-            session()->flash('swal', [
-                'icon'  => 'info',
-                'title' => 'Sin cambios',
-                'text'  => 'No se detectaron modificaciones.',
-            ]);
-            return redirect()->route('admin.roles.edit', $role);
-        }
-
-        $role->update(['name' => $request->name]);
-
-        session()->flash('swal', [
-            'icon'  => 'success',
-            'title' => 'Rol actualizado',
-            'text'  => 'El rol se actualizó correctamente.',
-        ]);
-
-        return redirect()->route('admin.roles.index');
+        return redirect()->route('admin.roles.index')->with('success', 'Rol actualizado correctamente.');
     }
 
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(string $id)
     {
         $role = Role::findOrFail($id);
@@ -111,5 +126,22 @@ class RoleController extends Controller
         ]);
 
         return redirect()->route('admin.roles.index');
+    }
+
+    /**
+     * Reglas para roles protegidos (no editar / no eliminar).
+     * Ajusta la lista según tus necesidades.
+     */
+    private function isProtected(Role $role): bool
+    {
+        $protegidos = [
+            'admin',
+            'administrator',
+            'super admin',
+            'super-admin',
+            'root',
+        ];
+
+        return in_array(mb_strtolower($role->name), $protegidos, true);
     }
 }
