@@ -1,35 +1,4 @@
 <x-admin-layout
-<<<<<<< HEAD
-    title="Roles | MediCitas"
-    :breadcrumbs="[
-        [
-            'name' => 'Dashboard',
-            'href' => route ('admin.dashboard'),
-        ],
-
-        [
-            'name' => 'Roles',
-            'href' => route ('admin.roles.index')
-        ],
-        [
-            'name' => 'Nuevo'
-        ]
-    ]">
-
-    <x-wire-card>
-        <form action="{{route('admin.roles.store')}}" method="POST">
-            @csrf
-
-            <x-wire-input label="nombre" name="name" placeholder="Nombre del rol" value="{{old('name')}}">
-
-            </x-wire-input>
-            <div class="flex-justify-end mt-4">
-                <x-wire-button type='submit' blue>Guardar</x-wire-button>
-            </div>
-        </form>
-    </x-wire-card>
-
-=======
     title="Roles | HouseMD"
     :breadcrumbs="[
         ['name' => 'Dashboard', 'href' => route('admin.dashboard')],
@@ -75,5 +44,4 @@
             </form>
         </div>
     </div>
->>>>>>> 463f42e (feat(roles): complete CRUD workflow with edit restrictions and delete confirmation)
 </x-admin-layout>

@@ -1,25 +1,8 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 463f42e (feat(roles): complete CRUD workflow with edit restrictions and delete confirmation)
 <x-admin-layout
     title="Roles | HouseMD"
     :breadcrumbs="[
         [
             'name' => 'Dashboard',
-<<<<<<< HEAD
-            'href' => route ('admin.dashboard'),
-        ],
-
-        [
-            'name' => 'Roles',
-            'href' => route ('admin.roles.index')
-        ],
-        [
-            'name' => 'Editar'
-        ]
-    ]">
-=======
             'href' => route('admin.dashboard'),
         ],
         [
@@ -55,5 +38,4 @@
 
         </form>
     </x-wire-card>
->>>>>>> 463f42e (feat(roles): complete CRUD workflow with edit restrictions and delete confirmation)
 </x-admin-layout>

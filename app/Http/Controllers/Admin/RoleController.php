@@ -8,23 +8,6 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-<<<<<<< HEAD
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return view('admin.roles.index');  //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('admin.roles.create');
-    }
-=======
     /** IDs protegidos: 1..4 */
     protected function isProtected(Role $role): bool
     {
@@ -34,47 +17,9 @@ class RoleController extends Controller
     public function index() { return view('admin.roles.index'); }
 
     public function create() { return view('admin.roles.create'); }
->>>>>>> 463f42e (feat(roles): complete CRUD workflow with edit restrictions and delete confirmation)
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-<<<<<<< HEAD
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name',
-        ]);
-
-        Role::create([
-            'name' => $request->name,
-            'guard_name' => 'web'
-        ]);
-
-        session() ->flash('swal',
-            [
-                'icon'=>'success',
-                'title'=>'Role Created Successfully',
-                'text'=>'el rola ha sido creado'
-
-            ]);
-
-        return redirect()->route('admin.roles.index')->with('success', 'Rol creado correctamente.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-=======
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:roles,name',
         ]);
@@ -90,7 +35,6 @@ class RoleController extends Controller
         return redirect()->route('admin.roles.index');
     }
 
->>>>>>> 463f42e (feat(roles): complete CRUD workflow with edit restrictions and delete confirmation)
     public function edit(string $id)
     {
         $role = Role::findOrFail($id);
@@ -107,21 +51,8 @@ class RoleController extends Controller
         return view('admin.roles.edit', compact('role'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-<<<<<<< HEAD
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
-        $role = Role::findOrFail($id);
-        $role->update($request->only('name'));
-
-        return redirect()->route('admin.roles.index')->with('success', 'Rol actualizado correctamente.');
-=======
         $role = Role::findOrFail($id);
 
         if ($this->isProtected($role)) {
@@ -155,12 +86,8 @@ class RoleController extends Controller
         ]);
 
         return redirect()->route('admin.roles.index');
->>>>>>> 463f42e (feat(roles): complete CRUD workflow with edit restrictions and delete confirmation)
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $role = Role::findOrFail($id);

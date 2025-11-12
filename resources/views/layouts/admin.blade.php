@@ -1,16 +1,9 @@
 @props([
-<<<<<<< HEAD
-    'title' =>  config('app.name', 'Laravel'),
-    'breadcrumbs' => []])
-
-    <!DOCTYPE html>
-=======
     'title' => config('app.name', 'Laravel'),
     'breadcrumbs' => []
 ])
 
 <!DOCTYPE html>
->>>>>>> 463f42e (feat(roles): complete CRUD workflow with edit restrictions and delete confirmation)
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -26,51 +19,13 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-<<<<<<< HEAD
-    <script src="https://kit.fontawesome.com/e9e74fca35.js" crossorigin="anonymous"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    {{-- WireUI --}}
-    <wireui:scripts />
-
-    <!-- Styles -->
-=======
     <script src="https://kit.fontawesome.com/9161014f5f.js" crossorigin="anonymous"></script>
 
     <!-- Livewire Styles -->
->>>>>>> 463f42e (feat(roles): complete CRUD workflow with edit restrictions and delete confirmation)
     @livewireStyles
 </head>
 <body class="font-sans antialiased bg-gray-50">
 
-<<<<<<< HEAD
-@include('layouts.includes.admin.navigation')
-
-@include('layouts.includes.admin.sidebar')
-
-<div class="p-4 sm:ml-64">
-    <!-- Margin top 14px -->
-    <div class="mt-14 flex items-center justify-between w-full" ></div>
-    <div class="container mx-auto">
-        @include('layouts.includes.admin.breadcrumb')
-    </div>
-    {{ $slot }}
-</div>
-@stack('modals')
-
-@livewireScripts
-<script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-
-@if (@session('swal'))
-    <script>
-        Swal.fire(@json('swal'));
-    </script>
-@endif
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-=======
     {{-- Navegación y barra lateral --}}
     @include('layouts.includes.admin.navigation')
     @include('layouts.includes.admin.sidebar')
@@ -134,6 +89,5 @@
             });
         });
     </script>
->>>>>>> 463f42e (feat(roles): complete CRUD workflow with edit restrictions and delete confirmation)
 </body>
 </html>
