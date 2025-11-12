@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Livewire\Admin\Datatables;
+namespace App\Livewire\Admin\DataTables;
 
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
-use App\Models\Role;
-use Carbon\Carbon;
+// Si usas Spatie (recomendado):
+use Spatie\Permission\Models\Role;
+// Si a propósito tienes App\Models\Role, déjalo como lo tenías.
 
 class RoleTable extends DataTableComponent
 {
@@ -19,25 +20,13 @@ class RoleTable extends DataTableComponent
     public function columns(): array
     {
         return [
-            Column::make('Id', 'id')
-                ->sortable(),
-
-            Column::make('Nombre', 'name')
-                ->sortable(),
-
-            Column::make('Fecha', 'created_at') // <- nombre correcto
-            ->sortable()
-                ->format(function ($value, $row) {
-                    if (!$row->created_at) return '-';
-
-                    // Si ya es Carbon, formatea; si es string, parsea y formatea
-                    $dt = $row->created_at instanceof \Carbon\Carbon
-                        ? $row->created_at
-                        : Carbon::parse($row->created_at);
-
-                    return $dt->format('d/m/Y');
-                }),
+            Column::make('Id', 'id')->sortable(),
+            Column::make('Nombre', 'name')->sortable()->searchable(),
+            Column::make('Fecha de Creación', 'created_at')
+                ->sortable()
+                ->format(fn($v) => optional($v)->format('d/m/Y H:i')),
+            Column::make('Acciones')
+                ->label(fn($row) => view('admin.roles.actions', ['role' => $row])),
         ];
     }
 }
-
