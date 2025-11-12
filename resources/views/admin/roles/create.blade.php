@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <x-admin-layout
     title="Roles | HouseMD"
     :breadcrumbs="[
@@ -16,21 +15,6 @@
             Guardar
         </x-wire-button>
     </x-slot>
-=======
-<x-admin-layout title="Roles | Medify" :breadcrumb="[
-    [
-        'name' => 'Dashboard',
-        'route' => route('admin.dashboard'),
-    ],
-    [
-        'name' => 'Roles',
-        'route' => route('admin.roles.index'),
-    ],
-    [
-        'name' => 'Nuevo',
-    ],
-]">
->>>>>>> parent of 19a4104 (feat(roles): add top "Nuevo" button in roles page and integrate it into admin layout slot)
 
     {{-- ÚNICO formulario (el de la tarjeta). Se eliminó el grupo superior duplicado --}}
     <div class="max-w-3xl mx-auto">
@@ -61,4 +45,3 @@
         </div>
     </div>
 </x-admin-layout>
->

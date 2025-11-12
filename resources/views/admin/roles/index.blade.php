@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <x-admin-layout
     title="Roles | HouseMD"
     :breadcrumbs="[
@@ -21,16 +20,4 @@
 
     @livewire('admin.data-tables.role-table')
 
-=======
-<x-admin-layout title="Roles | Simify" :breadcrumb="[
-    [
-        'name' => 'Dashboard',
-        'route' => route('admin.dashboard'),
-    ],
-    [
-        'name' => 'Roles',
-    ],
-]">
-    @livewire('admin.datatables.role-table')
->>>>>>> parent of 19a4104 (feat(roles): add top "Nuevo" button in roles page and integrate it into admin layout slot)
 </x-admin-layout>

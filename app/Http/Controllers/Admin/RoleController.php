@@ -13,7 +13,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        return view('admin.roles.index');
+        return view('admin.roles.index');  //
     }
 
     /**
@@ -35,7 +35,7 @@ class RoleController extends Controller
 
         Role::create([
             'name' => $request->name,
-            'guard_name' => 'web'
+            'guard_name' => 'web',
         ]);
 
         session()->flash('swal', [
@@ -44,7 +44,8 @@ class RoleController extends Controller
             'text'  => 'El rol ha sido creado correctamente.',
         ]);
 
-        return redirect()->route('admin.roles.index')->with('success', 'Rol creado correctamente.');
+        // Opcional: si ya usas swal, puedes quitar este with si no lo necesitas
+        return redirect()->route('admin.roles.index');
     }
 
     /**
@@ -61,16 +62,6 @@ class RoleController extends Controller
     public function edit(string $id)
     {
         $role = Role::findOrFail($id);
-
-        if ($this->isProtected($role)) {
-            session()->flash('swal', [
-                'icon'  => 'error',
-                'title' => 'Acción no permitida',
-                'text'  => 'Este rol no puede modificarse.',
-            ]);
-            return redirect()->route('admin.roles.index');
-        }
-
         return view('admin.roles.edit', compact('role'));
     }
 
@@ -80,24 +71,34 @@ class RoleController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            // ignora el ID actual para el unique
             'name' => 'required|string|max:255|unique:roles,name,' . $id,
         ]);
 
         $role = Role::findOrFail($id);
 
-        if ($this->isProtected($role)) {
+        // Si el nombre es el mismo, no actualizamos y mostramos info
+        if ($role->name === $request->name) {
             session()->flash('swal', [
-                'icon'  => 'error',
-                'title' => 'Acción no permitida',
-                'text'  => 'Este rol no puede modificarse.',
+                'icon'  => 'info',
+                'title' => 'Sin cambios',
+                'text'  => 'No se detectaron modificaciones en el rol.',
             ]);
+
             return redirect()->route('admin.roles.index');
         }
 
-        $role->update($request->only('name'));
+        // Actualizamos nombre
+        $role->update([
+            'name' => $request->name,
+        ]);
 
-        return redirect()->route('admin.roles.index')->with('success', 'Rol actualizado correctamente.');
+        session()->flash('swal', [
+            'icon'  => 'success',
+            'title' => 'Role actualizado',
+            'text'  => 'El rol ha sido actualizado correctamente.',
+        ]);
+
+        return redirect()->route('admin.roles.index');
     }
 
     /**
@@ -105,43 +106,27 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
+        // ✅ Definimos el rol antes de usarlo
         $role = Role::findOrFail($id);
 
-        if ($this->isProtected($role)) {
+        if ($role->id <= 4) {
             session()->flash('swal', [
                 'icon'  => 'error',
-                'title' => 'Acción no permitida',
-                'text'  => 'Este rol no se puede eliminar.',
+                'title' => 'error',
+                'text'  => 'No se puede eliminar este rol.',
             ]);
+
             return redirect()->route('admin.roles.index');
         }
 
-        $name = $role->name;
         $role->delete();
 
         session()->flash('swal', [
             'icon'  => 'success',
-            'title' => 'Rol eliminado',
-            'text'  => "«{$name}» se eliminó correctamente.",
+            'title' => 'Role eliminado',
+            'text'  => 'El rol ha sido eliminado correctamente.',
         ]);
 
         return redirect()->route('admin.roles.index');
-    }
-
-    /**
-     * Reglas para roles protegidos (no editar / no eliminar).
-     * Ajusta la lista según tus necesidades.
-     */
-    private function isProtected(Role $role): bool
-    {
-        $protegidos = [
-            'admin',
-            'administrator',
-            'super admin',
-            'super-admin',
-            'root',
-        ];
-
-        return in_array(mb_strtolower($role->name), $protegidos, true);
     }
 }
