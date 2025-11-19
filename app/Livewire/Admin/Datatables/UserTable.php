@@ -1,48 +1,52 @@
 <?php
 
-namespace App\Livewire\Admin\DataTables;
+namespace App\Livewire\Admin\Datatables;
 
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserTable extends DataTableComponent
 {
-    protected $model = User::class;
+    //protected $model = User::class;
+
+    public function builder(): Builder
+    {
+        return User::query()->with('roles');
+    }
 
     public function configure(): void
     {
-        $this->setPrimaryKey('id')
-            ->setTableRowUrl(function($row) {
-                return route('admin.users.edit', $row);
-            })
-            ->setTableAttributes(['class' => 'table table-striped table-black-borders table-hover-gray']);
+        $this->setPrimaryKey('id');
     }
+
     public function columns(): array
-{
-    return [
+    {
+        return [
             Column::make("Id", "id")
                 ->sortable(),
-            Column::make("Nombre", "name")
-                ->sortable()
-                ->searchable(),
+            Column::make("Name", "name")
+                ->sortable(),
             Column::make("Email", "email")
-                ->sortable()
-                ->searchable(),
-            Column::make("Rol")
-                ->label(function($row){
-                    return $row->roles->first()?->name ?? 'Sin rol';
+                ->sortable(),
+
+            // 👇 Aquí el nombre correcto de la columna
+            Column::make("Numero de id", "id_numero")
+                ->sortable(),
+
+            Column::make("Telefono", "phone")
+                ->sortable(),
+            Column::make("Rol", "roles")
+                ->label(function ($row) {
+                    return $row->roles->first()?->name ?? 'SIN ROL';
                 }),
-            Column::make("Fecha", "created_at")
-                ->sortable()
-                ->format(function($value) {
-                    return $value->format('d/m/Y');
-                }),
+
             Column::make("Acciones")
-                ->label(function($row){
-                    return view('admin.users.actions',
-                ['user' => $row]);
-                })
+                ->label(function ($row) {
+                    return view('admin.users.actions', ['user' => $row]);
+
+                }),
         ];
     }
 }
