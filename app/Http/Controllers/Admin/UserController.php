@@ -36,7 +36,11 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'id_number' => 'required|string|max:255|unique:users',
+            'phone' => 'required|digits_between:7,15',
             'role' => 'required|exists:roles,id',
+            'address' => 'required|min:3|string|max:500',
+            
         ]);
 
         $user = User::create([
@@ -114,6 +118,10 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+            if(Auth()->user()->id === $user->id){
+            abort(403, 'No puedes eliminar tu propio usuario');
+        }
+
         // Prevent deleting the current authenticated user
         if ($user->id === auth()->id()) {
             session()->flash('swal', [

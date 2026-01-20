@@ -33,7 +33,7 @@
 
           <x-input
 
-            label="Contraseña (opcional)" name="password" type="password" placeholder="Dejar vacío para mantener la actual">
+            label="Contraseña (opcional)" name="password" type="password" placeholder="Nueva contraseña">
 
           </x-input>
 
