@@ -10,13 +10,15 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return view('admin.users.index');
-    }
+   
+
+    
+ public function index()
+{
+    $users = User::latest()->paginate(10);
+
+    return view('admin.users.index', compact('users'));
+}
 
     /**
      * Show the form for creating a new resource.
@@ -36,7 +38,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'id_number' => 'required|string|max:255|unique:users',
+            'id_numero' => 'required|string|max:255|unique:users',
             'phone' => 'required|digits_between:7,15',
             'role' => 'required|exists:roles,id',
             'address' => 'required|min:3|string|max:500',

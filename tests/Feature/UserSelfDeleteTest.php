@@ -6,7 +6,7 @@ Use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 test('un usuario no puede eliminarse a si mismo', function () {
-    $response = $this->get('/');
+   
 // Creacion del usuario de prueba
     $user = User::factory()->create();
 
