@@ -5,20 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Patient; // Añadido según el diff
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-   
-
-    
- public function index()
-{
-    $users = User::latest()->paginate(10);
-
-    return view('admin.users.index', compact('users'));
-}
+    public function index()
+    {
+        $users = User::latest()->paginate(10);
+        return view('admin.users.index', compact('users'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -34,7 +31,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
@@ -42,25 +39,47 @@ class UserController extends Controller
             'phone' => 'required|digits_between:7,15',
             'role' => 'required|exists:roles,id',
             'address' => 'required|min:3|string|max:500',
-            
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'id_numero' => $request->id_numero,
+            'phone' => $request->phone,
+            'address' => $request->address,
         ]);
 
+        // Asignar el rol al usuario (buscar por id y usar su nombre)
         $role = Role::find($request->role);
-        $user->assignRole($role);
+        if ($role) {
+            $user->assignRole($role->name);
+        }
 
-        session()->flash('swal', [
-            'icon' => 'success',
-            'title' => 'Usuario creado correctamente',
-            'text' => 'El usuario se ha creado exitosamente',
-        ]);
+        // Lógica agregada: Si el rol (por nombre) es 'Paciente', crear registro en la tabla patients
+        if ($role && $role->name === 'Paciente') {
+            Patient::create([
+                'user_id' => $user->id,
+                'emergency_contact_name' => 'Por definir',
+                'emergency_contact_phone' => '0000000000',
+            ]);
 
-        return redirect()->route('admin.users.index');
+            return redirect()->route('admin.patients.index')
+                ->with('swal', [
+                    'title' => 'Paciente creado',
+                    'text' => 'Complete la información médica del paciente.',
+                    'icon' => 'success',
+                ]);
+        }
+
+        // Redirigir con mensaje de éxito (Actualizado según diff)
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Usuario creado exitosamente.')
+            ->with('swal', [
+                'title' => 'Usuario creado',
+                'text' => 'El usuario ha sido creado exitosamente.',
+                'icon' => 'success',
+            ]);
     }
 
     /**
@@ -120,12 +139,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-            if(Auth()->user()->id === $user->id){
-            abort(403, 'No puedes eliminar tu propio usuario');
-        }
-
-        // Prevent deleting the current authenticated user
-        if ($user->id === auth()->id()) {
+        if (auth()->user()->id === $user->id) {
             session()->flash('swal', [
                 'icon' => 'error',
                 'title' => 'Acción no permitida',
@@ -136,12 +150,12 @@ class UserController extends Controller
 
         $user->delete();
 
-        session()->flash('swal', [
-            'icon' => 'success',
-            'title' => 'Usuario eliminado correctamente',
-            'text' => 'El usuario ha sido eliminado exitosamente',
-        ]);
-
-        return redirect()->route('admin.users.index');
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Usuario eliminado exitosamente.')
+            ->with('swal', [
+                'title' => 'Usuario eliminado',
+                'text' => 'El usuario ha sido eliminado exitosamente.',
+                'icon' => 'success',
+            ]);
     }
 }

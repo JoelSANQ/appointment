@@ -16,6 +16,25 @@
         <form action="{{ route('admin.users.store') }}" method="POST">
             @csrf
 
+            {{-- Mostrar errores de validación --}}
+            @if ($errors->any())
+                <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded">
+                    <strong class="text-red-700">Se encontraron errores:</strong>
+                    <ul class="mt-2 text-sm text-red-600">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            {{-- Mensajes de sesión --}}
+            @if (session('success'))
+                <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded text-green-700">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                 <!-- NOMBRE -->
@@ -41,11 +60,11 @@
 
                 <!-- IDENTIFICACIÓN -->
                 <x-wire-input
-                    name="id_number"
+                    name="id_numero"
                     label="Número de identificación"
                     placeholder="Ej. 12345678"
                     required
-                    :value="old('id_number')"
+                    :value="old('id_numero')"
                 />
 
                 <!-- TELÉFONO -->
@@ -58,6 +77,17 @@
                     inputmode="numeric"
                     autocomplete="tel"
                 />
+
+                <!-- DIRECCIÓN (ancho completo) -->
+                <div class="md:col-span-2">
+                    <x-wire-input
+                        name="address"
+                        label="Dirección"
+                        placeholder="Dirección del usuario"
+                        required
+                        :value="old('address')"
+                    />
+                </div>
 
                 <!-- PASSWORD -->
                 <x-wire-input

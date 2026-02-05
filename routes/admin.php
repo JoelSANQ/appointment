@@ -11,3 +11,5 @@ Route::get('/', function () {
 Route::resource('roles', RoleController::class);
 
 Route::resource('users', UserController::class);
+
+Route::resource('patients', \App\Http\Controllers\Admin\PatientController::class);
