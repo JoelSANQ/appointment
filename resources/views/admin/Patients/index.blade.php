@@ -11,6 +11,7 @@
     ]"
 >
 
+
     <x-slot name="action">
         <x-wire-button blue href="{{ route('admin.patients.create') }}">
             <i class="fa-solid fa-plus"></i>

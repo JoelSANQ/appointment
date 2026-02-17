@@ -145,7 +145,6 @@ class PatientController extends Controller
         // Actualizar el registro de paciente
         $patient->update([
             'blood_type_id' => $validated['blood_type_id'],
-            'gender' => $validated['gender'],
             'allergies' => $validated['allergies'],
             'chronic_conditions' => $validated['chronic_conditions'],
             'surgical_history' => $validated['surgical_history'],
