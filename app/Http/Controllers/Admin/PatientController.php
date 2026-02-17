@@ -40,14 +40,17 @@ class PatientController extends Controller
             'phone' => 'required|string|max:20',
             'password' => 'required|string|min:8|confirmed',
             'address' => 'required|string|max:500',
+
             'blood_type_id' => 'nullable|exists:blood_types,id',
             'allergies' => 'nullable|string',
             'chronic_conditions' => 'nullable|string',
             'surgical_history' => 'nullable|string',
+            'family_history' => 'nullable|string',
             'observations' => 'nullable|string',
+
             'emergency_contact_name' => 'required|string|max:255',
             'emergency_contact_phone' => 'required|string|max:20',
-           
+            'emergency_contact_relationship' => 'nullable|string|max:255',
         ]);
 
         // Crear el usuario
@@ -66,14 +69,15 @@ class PatientController extends Controller
         // Crear el registro de paciente
         Patient::create([
             'user_id' => $user->id,
-            'blood_type_id' => $validated['blood_type_id'],
-            'allergies' => $validated['allergies'],
-            'chronic_conditions' => $validated['chronic_conditions'],
-            'surgical_history' => $validated['surgical_history'],
-            'observations' => $validated['observations'],
+            'blood_type_id' => $validated['blood_type_id'] ?? null,
+            'allergies' => $validated['allergies'] ?? null,
+            'chronic_conditions' => $validated['chronic_conditions'] ?? null,
+            'surgical_history' => $validated['surgical_history'] ?? null,
+            'family_history' => $validated['family_history'] ?? null,
+            'observations' => $validated['observations'] ?? null,
             'emergency_contact_name' => $validated['emergency_contact_name'],
             'emergency_contact_phone' => $validated['emergency_contact_phone'],
-          
+            'emergency_contact_relationship' => $validated['emergency_contact_relationship'] ?? null,
         ]);
 
         return redirect()->route('admin.patients.index')
@@ -105,54 +109,27 @@ class PatientController extends Controller
 
     /**
      * Update the specified resource in storage.
+     *
+     * ✅ FIX: Este update SOLO actualiza datos del PACIENTE,
+     * porque en tu edit.blade.php los datos de usuario (name/email/phone/address...)
+     * se editan desde "Editar usuario ↗" y aquí van solo en modo lectura.
      */
     public function update(Request $request, Patient $patient)
     {
-        // Validar los datos del formulario
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $patient->user_id . '|max:255',
-            'id_number' => 'required|string|unique:users,id_number,' . $patient->user_id . '|max:20',
-            'phone' => 'required|string|max:20',
-            'password' => 'nullable|string|min:8|confirmed',
-            'address' => 'required|string|max:500',
             'blood_type_id' => 'nullable|exists:blood_types,id',
             'allergies' => 'nullable|string',
             'chronic_conditions' => 'nullable|string',
             'surgical_history' => 'nullable|string',
+            'family_history' => 'nullable|string',
             'observations' => 'nullable|string',
+
             'emergency_contact_name' => 'required|string|max:255',
             'emergency_contact_phone' => 'required|string|max:20',
-       
+            'emergency_contact_relationship' => 'nullable|string|max:255',
         ]);
 
-        // Actualizar el usuario
-        $userData = [
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'id_number' => $validated['id_number'],
-            'phone' => $validated['phone'],
-            'address' => $validated['address'],
-        ];
-
-        // Solo actualizar contraseña si se proporcionó una nueva
-        if (!empty($validated['password'])) {
-            $userData['password'] = bcrypt($validated['password']);
-        }
-
-        $patient->user->update($userData);
-
-        // Actualizar el registro de paciente
-        $patient->update([
-            'blood_type_id' => $validated['blood_type_id'],
-            'allergies' => $validated['allergies'],
-            'chronic_conditions' => $validated['chronic_conditions'],
-            'surgical_history' => $validated['surgical_history'],
-            'observations' => $validated['observations'],
-            'emergency_contact_name' => $validated['emergency_contact_name'],
-            'emergency_contact_phone' => $validated['emergency_contact_phone'],
-            
-        ]);
+        $patient->update($validated);
 
         return redirect()->route('admin.patients.index')
             ->with('swal', [
