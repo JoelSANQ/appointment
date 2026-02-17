@@ -146,64 +146,89 @@
                         </div>
                     </div>
 
-            
                 </div>
 
                 {{-- ================= TAB: ANTECEDENTES ================= --}}
                 <div x-show="tab === 'antecedentes'" x-cloak>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                         <x-wire-input name="familiar_history" label="Antecedentes familiares"
-                            :value="old('familiar_history', $patient->familiar_history)" />
+                        {{-- ✅ FIX: antes estaba familiar_history; en tu modelo tienes family_history --}}
+                        <x-wire-input
+                            name="family_history"
+                            label="Antecedentes familiares"
+                            :value="old('family_history', $patient->family_history)"
+                        />
 
-                        <x-wire-input name="allergies" label="Alergias"
-                            :value="old('allergies', $patient->allergies)" />
+                        <x-wire-input
+                            name="allergies"
+                            label="Alergias"
+                            :value="old('allergies', $patient->allergies)"
+                        />
 
-                        <x-wire-input name="chronic_conditions" label="Enfermedades crónicas"
-                            :value="old('chronic_conditions', $patient->chronic_conditions)" />
+                        <x-wire-input
+                            name="chronic_conditions"
+                            label="Enfermedades crónicas"
+                            :value="old('chronic_conditions', $patient->chronic_conditions)"
+                        />
 
-                        <x-wire-input name="surgical_history" label="Antecedentes quirúrgicos"
-                            :value="old('surgical_history', $patient->surgical_history)" />
+                        <x-wire-input
+                            name="surgical_history"
+                            label="Antecedentes quirúrgicos"
+                            :value="old('surgical_history', $patient->surgical_history)"
+                        />
                     </div>
                 </div>
 
                 {{-- ================= TAB: INFORMACIÓN GENERAL ================= --}}
                 <div x-show="tab === 'informacion'" x-cloak>
                     <div>
-                            <label class="block text-sm font-medium text-gray-700">Tipo Sangre</label>
-                            <select name="blood_type_id" class="mt-1 block w-50* rounded-md border-gray-300">
-                                <option value="">-- Seleccionar --</option>
-                                @foreach($bloodTypes as $id => $name)
-                                    <option value="{{ $id }}"
-                                        {{ old('blood_type_id', $patient->blood_type_id) == $id ? 'selected' : '' }}>
-                                        {{ $name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    <label class="block text-sm font-medium text-gray-700">Observaciones</label>
-                    <textarea name="observations" rows="4"
-                        class="mt-1 block w-full rounded-md border-gray-300">
-                        {{ old('observations', $patient->observations) }}
-                    </textarea>
+                        <label class="block text-sm font-medium text-gray-700">Tipo Sangre</label>
+                        <select name="blood_type_id" class="mt-1 block w-50* rounded-md border-gray-300">
+                            <option value="">-- Seleccionar --</option>
+                            @foreach($bloodTypes as $id => $name)
+                                <option value="{{ $id }}"
+                                    {{ old('blood_type_id', $patient->blood_type_id) == $id ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <label class="block text-sm font-medium text-gray-700 mt-4">Observaciones</label>
+
+                    {{-- ✅ FIX: textarea sin indentación para no guardar espacios/saltos --}}
+                    <textarea
+                        name="observations"
+                        rows="4"
+                        class="mt-1 block w-full rounded-md border-gray-300"
+                    >{{ old('observations', $patient->observations) }}</textarea>
                 </div>
 
                 {{-- ================= TAB: CONTACTO EMERGENCIA ================= --}}
                 <div x-show="tab === 'emergencia'" x-cloak>
-                    <div class="grid grid-cols-1  gap-4">
-                        <x-wire-input name="emergency_contact_name"
+                    <div class="grid grid-cols-1 gap-4">
+                        <x-wire-input
+                            name="emergency_contact_name"
                             label="Nombre del contacto de emergencia"
-                            :value="old('emergency_contact_name', $patient->emergency_contact_name)" required 
-                            placeholder="Nombre del contacto de emergencia"/>
+                            :value="old('emergency_contact_name', $patient->emergency_contact_name)"
+                            required
+                            placeholder="Nombre del contacto de emergencia"
+                        />
 
-                        <x-wire-input name="emergency_contact_phone"
+                        <x-wire-input
+                            name="emergency_contact_phone"
                             label="Contacto de emergencia (teléfono)"
-                            :value="old('emergency_contact_phone', $patient->emergency_contact_phone)" required
-                            placeholder="Ej: (999)999 999" />
+                            :value="old('emergency_contact_phone', $patient->emergency_contact_phone)"
+                            required
+                            placeholder="Ej: (999)999 999"
+                        />
 
-                        <x-wire-input name="emergency_contact_relationship"
+                        <x-wire-input
+                            name="emergency_contact_relationship"
                             label="Relación con el paciente"
-                            :value="old('emergency_contact_relationship', $patient->emergency_contact_relationship)" required 
-                            placeholder="Familiar, Amigo, etc."/>
+                            :value="old('emergency_contact_relationship', $patient->emergency_contact_relationship)"
+                            required
+                            placeholder="Familiar, Amigo, etc."
+                        />
                     </div>
                 </div>
 
