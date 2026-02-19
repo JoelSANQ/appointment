@@ -104,7 +104,8 @@ class PatientController extends Controller
     {
         $patient->load(['user', 'bloodType']);
         $bloodTypes = BloodType::pluck('name', 'id')->toArray();
-        return view('admin.patients.edit', compact('patient', 'bloodTypes'));
+        $initialTab = 'datos-personales';
+        return view('admin.patients.edit', compact('patient', 'bloodTypes', 'initialTab'));
     }
 
     /**
@@ -127,6 +128,11 @@ class PatientController extends Controller
             'emergency_contact_name' => 'required|string|max:255',
             'emergency_contact_phone' => 'required|string|max:20',
             'emergency_contact_relationship' => 'nullable|string|max:255',
+
+            [
+    'emergency_contact_name.required' => 'El nombre del contacto de emergencia es obligatorio.',
+    'emergency_contact_phone.required' => 'El teléfono del contacto de emergencia es obligatorio.',
+]
         ]);
 
         $patient->update($validated);
