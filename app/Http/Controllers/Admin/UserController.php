@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Patient; // Añadido según el diff
+use App\Models\Patient;
+use App\Models\Doctor;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 
@@ -72,7 +73,21 @@ class UserController extends Controller
                 ]);
         }
 
-        // Redirigir con mensaje de éxito (Actualizado según diff)
+        // Lógica agregada: Si el rol (por nombre) es 'Doctor', crear registro en la tabla doctors
+        if ($role && $role->name === 'Doctor') {
+            Doctor::create([
+                'user_id' => $user->id,
+            ]);
+
+            return redirect()->route('admin.doctors.index')
+                ->with('swal', [
+                    'title' => 'Doctor creado',
+                    'text' => 'Complete la información profesional del doctor.',
+                    'icon' => 'success',
+                ]);
+        }
+
+        // Redirigir con mensaje de éxito para otros roles
         return redirect()->route('admin.users.index')
             ->with('success', 'Usuario creado exitosamente.')
             ->with('swal', [

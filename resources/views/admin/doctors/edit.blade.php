@@ -11,9 +11,10 @@
         @method('PUT')
 
         <x-wire-card>
-            {{-- Cabecera del Perfil --}}
+            {{-- Cabecera del Perfil (Avatar y Botones) --}}
             <div class="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
                 <div class="flex items-center space-x-4">
+                    {{-- Avatar circular con iniciales dinámicas --}}
                     <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 text-blue-600 text-xl font-bold border border-blue-100">
                         {{ collect(explode(' ', $doctor->user->name))->map(fn($n) => mb_substr($n, 0, 1))->take(2)->join('') }}
                     </div>
@@ -29,9 +30,10 @@
                 </div>
             </div>
 
-            {{-- Formulario --}}
+            {{-- Formulario de Edición --}}
             <div class="grid grid-cols-1 gap-6">
                 
+                {{-- Selección de Especialidad --}}
                 <x-wire-native-select
                     label="Especialidad"
                     name="speciality_id"
@@ -41,6 +43,7 @@
                     <option value="">Selecciona una especialidad</option>
                 </x-wire-native-select>
 
+                {{-- Número de licencia médica --}}
                 <x-wire-input
                     label="Número de licencia médica"
                     name="medical_license_number"
@@ -48,6 +51,7 @@
                     placeholder="Ej. 6549876341654654"
                 />
 
+                {{-- Biografía  --}}
                 <x-wire-textarea
                     label="Biografía"
                     name="biography"
@@ -59,4 +63,5 @@
             </div>
         </x-wire-card>
     </form>
+
 </x-admin-layout>
