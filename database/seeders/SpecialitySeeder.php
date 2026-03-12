@@ -17,7 +17,9 @@ class SpecialitySeeder extends Seeder
             ['name' => 'Ginecología'],
             ['name' => 'Oftalmología'],
             ['name' => 'Psiquiatría'],
-            ['name' => 'Traumatología']
+            ['name' => 'Traumatología'],
+            ['name' => 'Proctología'],
+            ['name' => 'Veterinaria']
         ]);
     }
 }

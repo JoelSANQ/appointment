@@ -34,15 +34,16 @@
             <div class="grid grid-cols-1 gap-6">
                 
                 {{-- Selección de Especialidad --}}
-                <x-wire-native-select
-                    label="Especialidad"
-                    name="speciality_id"
-                    :options="$specialities->pluck('name', 'id')"
-                    :value="old('speciality_id', $doctor->speciality_id)"
-                >
-                    <option value="">Selecciona una especialidad</option>
-                </x-wire-native-select>
-
+               <x-wire-native-select
+    label="Especialidad"
+    name="speciality_id"
+    :options="$specialities" {{-- Pasamos la colección completa --}}
+    option-label="name"      {{-- Lo que el usuario lee --}}
+    option-value="id"        {{-- Lo que se guarda en la BD --}}
+    :value="old('speciality_id', $doctor->speciality_id)"
+>
+    <option value="">Selecciona una especialidad</option>
+</x-wire-native-select>
                 {{-- Número de licencia médica --}}
                 <x-wire-input
                     label="Número de licencia médica"

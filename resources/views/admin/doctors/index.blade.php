@@ -28,6 +28,10 @@
                     </div>
 
                     <div class="flex gap-2">
+                        <x-wire-button xs purple href="{{ route('admin.schedule.edit', $doctor) }}">
+                            <i class="fa-solid fa-calendar-days mr-1"></i> Horarios
+                        </x-wire-button>
+
                         <x-wire-button xs href="{{ route('admin.doctors.show', $doctor) }}">
                             Ver
                         </x-wire-button>

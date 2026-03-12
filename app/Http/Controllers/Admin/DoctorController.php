@@ -12,13 +12,17 @@ class DoctorController extends Controller
 {
     public function index()
     {
-        $doctors = Doctor::latest()->paginate(10);
+        $doctors = Doctor::whereHas('user', function($q) {
+            $q->role(User::ROLE_DOCTOR);
+        })->latest()->paginate(10);
         return view('admin.doctors.index', compact('doctors'));
     }
 
     public function create()
     {
-        $users = User::all();
+        $users = User::role(User::ROLE_DOCTOR)
+            ->whereDoesntHave('doctor')
+            ->get();
         $specialities = Speciality::all();
         return view('admin.doctors.create', compact('users', 'specialities'));
     }
@@ -29,7 +33,7 @@ class DoctorController extends Controller
             'user_id' => 'required|exists:users,id',
             'speciality_id' => 'required|exists:specialities,id',
             'medical_license_number' => 'required|string|max:255',
-            'biography' => 'nullable|string',
+            'biography' => 'nullable|string|max:255',
         ]);
 
         Doctor::create($request->all());
@@ -45,25 +49,24 @@ class DoctorController extends Controller
 
     public function edit(Doctor $doctor)
     {
-        $users = User::all();
+        $users = User::role(User::ROLE_DOCTOR)->get();
         $specialities = Speciality::all();
         return view('admin.doctors.edit', compact('doctor', 'users', 'specialities'));
     }
 
-    public function update(Request $request, Doctor $doctor)
-    {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'speciality_id' => 'required|exists:specialities,id', 
-            'medical_license_number' => 'required',
-            'biography' => 'nullable',
-        ]);
+ public function update(Request $request, Doctor $doctor)
+{
+    $request->validate([
+        'user_id' => 'required|exists:users,id',
+        'speciality_id' => 'required|exists:specialities,id', 
+        'medical_license_number' => 'required|string|max:255',
+        'biography' => 'nullable|string|max:2', // Ahora sí lanzará error si pones más de 2
+    ]);
 
-        $doctor->update($request->all());
+    $doctor->update($request->all());
 
-        return redirect()->route('admin.doctors.index')->with('success', 'Actualizado correctamente');
-    }
-
+    return redirect()->route('admin.doctors.index')->with('success', 'Actualizado correctamente');
+}
     public function destroy(Doctor $doctor)
     {
         $doctor->delete();

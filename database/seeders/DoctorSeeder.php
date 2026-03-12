@@ -10,8 +10,8 @@ class DoctorSeeder extends Seeder
 {
     public function run(): void
     {
-        // Obtenemos todos los usuarios existentes
-        $users = User::all();
+        // Obtenemos solo los usuarios con rol de Doctor
+        $users = User::role(User::ROLE_DOCTOR)->get();
 
         foreach ($users as $user) {
             Doctor::create([

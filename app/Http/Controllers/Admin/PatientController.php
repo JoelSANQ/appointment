@@ -36,7 +36,7 @@ class PatientController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email|max:255',
-            'id_number' => 'required|string|unique:users,id_number|max:20',
+            'id_numero' => 'required|string|unique:users,id_numero|max:20',
             'phone' => 'required|string|max:20',
             'password' => 'required|string|min:8|confirmed',
             'address' => 'required|string|max:500',
@@ -57,7 +57,7 @@ class PatientController extends Controller
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'id_number' => $validated['id_number'],
+            'id_numero' => $validated['id_numero'],
             'phone' => $validated['phone'],
             'password' => bcrypt($validated['password']),
             'address' => $validated['address'],

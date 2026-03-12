@@ -22,4 +22,14 @@ class Doctor extends Model
     {
         return $this->belongsTo(Speciality::class);
     }
+
+    public function workDays()
+    {
+        return $this->hasMany(WorkDay::class);
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
 }
