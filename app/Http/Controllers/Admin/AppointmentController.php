@@ -97,7 +97,7 @@ class AppointmentController extends Controller
         $startTime = Carbon::parse($request->time);
         $endTime = $startTime->copy()->addMinutes(30)->format('H:i');
 
-        Appointment::create([
+        $appointment = Appointment::create([
             'patient_id' => $request->patient_id,
             'doctor_id' => $request->doctor_id,
             'date' => $request->date,
@@ -106,6 +106,9 @@ class AppointmentController extends Controller
             'status' => 'Programado',
             'reason' => $request->reason,
         ]);
+
+        // Enviar confirmación por WhatsApp
+        $appointment->patient->notify(new \App\Notifications\AppointmentConfirmationWhatsApp($appointment));
 
         return redirect()->route('admin.appointments.index')->with('swal', [
             'icon' => 'success',
@@ -169,14 +172,24 @@ class AppointmentController extends Controller
             'status' => 'required|string',
         ]);
 
+        $oldStatus = $appointment->status;
         $appointment->update([
             'status' => $request->status,
         ]);
 
+        // Si se cancela la cita, notificar al paciente
+        if ($oldStatus != 'Cancelado' && $request->status == 'Cancelado') {
+            try {
+                $appointment->patient->notify(new \App\Notifications\AppointmentCancelledWhatsApp($appointment));
+            } catch (\Exception $e) {
+                \Log::error("Error enviando cancelación WhatsApp: " . $e->getMessage());
+            }
+        }
+
         return redirect()->route('admin.appointments.index')->with('swal', [
             'icon' => 'success',
             'title' => 'Cita actualizada',
-            'text' => 'El estado de la cita ha sido actualizado.',
+            'text' => 'El estado de la cita ha sido actualizado ' . ($request->status == 'Cancelado' ? 'y se ha notificado al paciente.' : '.'),
         ]);
     }
 
@@ -193,6 +206,28 @@ class AppointmentController extends Controller
             'text' => 'La cita ha sido eliminada del sistema.',
         ]);
     }
+    /**
+     * Enviar recordatorio manual por WhatsApp.
+     */
+    public function sendReminder(Appointment $appointment)
+    {
+        if (!$appointment->patient->phone_number) {
+            return back()->with('swal', [
+                'icon' => 'warning',
+                'title' => 'Sin teléfono',
+                'text' => 'El paciente no tiene un número de teléfono registrado.',
+            ]);
+        }
+
+        $appointment->patient->notify(new \App\Notifications\AppointmentConfirmationWhatsApp($appointment));
+
+        return back()->with('swal', [
+            'icon' => 'success',
+            'title' => 'Recordatorio enviado',
+            'text' => 'Se ha enviado la confirmación por WhatsApp exitosamente.',
+        ]);
+    }
+
     /**
      * Mostrar vista de consulta médica.
      */
@@ -254,10 +289,18 @@ class AppointmentController extends Controller
         // Marcar cita como completada si se guarda la consulta
         $appointment->update(['status' => 'Completado']);
 
+        // Enviar Receta por WhatsApp
+        try {
+            $appointment->patient->notify(new \App\Notifications\ConsultationCompletedWhatsApp($appointment));
+        } catch (\Exception $e) {
+            // No bloqueamos el flujo si falla el envío de notificación
+            \Log::error("Error enviando receta WhatsApp: " . $e->getMessage());
+        }
+
         return redirect()->route('admin.appointments.index')->with('swal', [
             'icon' => 'success',
             'title' => 'Consulta guardada',
-            'text' => 'La información médica y receta han sido registradas.',
+            'text' => 'La información médica y receta han sido registradas y enviadas al paciente.',
         ]);
     }
 }

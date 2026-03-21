@@ -199,7 +199,10 @@ return [
         'grand_prize'              => 'gran Premio',
         'group'                    => 'grupo',
         'hour'                     => 'hora',
+        'id'                       => 'ID',
+        'id_numero'                => 'número de identificación',
         'image'                    => 'imagen',
+
         'image_desktop'            => 'imagen de escritorio',
         'image_main'               => 'imagen principal',
         'image_mobile'             => 'imagen móvil',

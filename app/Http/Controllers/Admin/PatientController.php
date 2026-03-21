@@ -66,9 +66,11 @@ class PatientController extends Controller
         // Asignar rol de Paciente
         $user->assignRole('Paciente');
 
-        // Crear el registro de paciente
         Patient::create([
             'user_id' => $user->id,
+            'name' => $validated['name'],
+            'phone_number' => $validated['phone'],
+            'address' => $validated['address'],
             'blood_type_id' => $validated['blood_type_id'] ?? null,
             'allergies' => $validated['allergies'] ?? null,
             'chronic_conditions' => $validated['chronic_conditions'] ?? null,

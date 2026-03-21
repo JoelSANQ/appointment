@@ -38,7 +38,7 @@
 
                     <x-wire-input name="email" label="Email" type="email" :value="old('email')" required />
 
-                    <x-wire-input name="id_number" label="Número de identificación" :value="old('id_number')" required />
+                    <x-wire-input name="id_numero" label="Número de identificación" :value="old('id_numero')" required />
 
                     <x-wire-input name="phone" label="Teléfono" :value="old('phone')" required />
 
