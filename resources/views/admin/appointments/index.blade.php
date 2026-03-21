@@ -76,6 +76,16 @@
                                         <i class="fa-solid fa-stethoscope text-xs"></i>
                                     </a>
 
+                                    {{-- Botón de Recordatorio WhatsApp --}}
+                                    <form action="{{ route('admin.appointments.send-reminder', $appointment) }}" method="POST" class="inline shadow-sm">
+                                        @csrf
+                                        <button type="submit" 
+                                               title="Enviar recordatorio WhatsApp"
+                                               class="p-1.5 bg-green-500 text-white rounded hover:bg-green-600 transition-all">
+                                            <i class="fa-brands fa-whatsapp text-xs"></i>
+                                        </button>
+                                    </form>
+
                                     <a href="{{ route('admin.appointments.edit', $appointment) }}" 
                                        title="Editar cita"
                                        class="p-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all shadow-sm">

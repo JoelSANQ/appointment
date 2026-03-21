@@ -24,6 +24,7 @@ Route::middleware(['auth:sanctum', 'verified'])->name('admin.')->prefix('admin')
     Route::resource('appointments', AppointmentController::class);
     Route::get('appointments/{appointment}/consultation', [AppointmentController::class, 'consultation'])->name('appointments.consultation');
     Route::post('appointments/{appointment}/consultation', [AppointmentController::class, 'storeConsultation'])->name('appointments.consultation.store');
+    Route::post('appointments/{appointment}/reminder', [AppointmentController::class, 'sendReminder'])->name('appointments.send-reminder');
 
     // Calendario
     Route::get('calendar', [CalendarController::class, 'index'])->name('calendar.index');
