@@ -9,6 +9,7 @@ use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\Speciality;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AppointmentController extends Controller
 {
@@ -109,6 +110,37 @@ class AppointmentController extends Controller
 
         // Enviar confirmación por WhatsApp
         $appointment->patient->notify(new \App\Notifications\AppointmentConfirmationWhatsApp($appointment));
+
+        // Cargar relaciones necesarias para el correo y PDF
+        $appointment->load(['patient.user', 'doctor.user', 'doctor.speciality']);
+
+        // Generar PDF del comprobante
+        $pdf = Pdf::loadView('emails.appointments.receipt-pdf', ['appointment' => $appointment]);
+        $pdfContent = $pdf->output();
+
+        // Enviar correo con Laravel Mail
+        try {
+            $data = ['appointment' => $appointment];
+            $pdfFilename = 'Comprobante_Cita.pdf';
+
+            // Correo al paciente y al doctor
+            $recipients = [
+                $appointment->patient->user->email => 'Confirmación de Cita Médica - ' . $appointment->date,
+                $appointment->doctor->user->email  => 'Nueva Cita Asignada - ' . $appointment->date,
+            ];
+
+            foreach ($recipients as $email => $subject) {
+                \Illuminate\Support\Facades\Mail::send('emails.appointments.receipt-body', $data, function ($message) use ($email, $subject, $pdfContent, $pdfFilename) {
+                    $message->to($email)
+                        ->subject($subject)
+                        ->attachData($pdfContent, $pdfFilename, [
+                            'mime' => 'application/pdf',
+                        ]);
+                });
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error enviando correos con Laravel Mail: ' . $e->getMessage());
+        }
 
         return redirect()->route('admin.appointments.index')->with('swal', [
             'icon' => 'success',
