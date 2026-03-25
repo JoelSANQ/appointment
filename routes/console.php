@@ -9,4 +9,5 @@ Artisan::command('inspire', function () {
 
 use Illuminate\Support\Facades\Schedule;
 Schedule::command('appointments:send-reminders')->dailyAt('08:00');
+Schedule::command('appointments:daily-reports')->dailyAt('08:00');
 

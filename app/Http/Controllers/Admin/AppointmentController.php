@@ -9,6 +9,10 @@ use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\Speciality;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
+
 
 class AppointmentController extends Controller
 {
@@ -109,6 +113,37 @@ class AppointmentController extends Controller
 
         // Enviar confirmación por WhatsApp
         $appointment->patient->notify(new \App\Notifications\AppointmentConfirmationWhatsApp($appointment));
+
+        // Enviar Ticket por Email con PDF al Paciente y al Doctor
+        try {
+            $pdf = Pdf::loadView('emails.appointments.ticket-pdf', compact('appointment'));
+            $pdfContent = $pdf->output();
+            $subject = "Nueva Cita Médica - Cita #" . $appointment->id;
+            $attachmentName = "ticket-cita-{$appointment->id}.pdf";
+
+            // 1. Enviar al Paciente
+            $patientEmail = $appointment->patient->user->email;
+            if ($patientEmail) {
+                Mail::send('emails.appointments.ticket', compact('appointment'), function ($message) use ($patientEmail, $subject, $pdfContent, $attachmentName) {
+                    $message->to($patientEmail)
+                        ->subject($subject)
+                        ->attachData($pdfContent, $attachmentName, ['mime' => 'application/pdf']);
+                });
+            }
+
+            // 2. Enviar al Doctor
+            $doctorEmail = $appointment->doctor->user->email ?? null;
+            if ($doctorEmail) {
+                Mail::send('emails.appointments.ticket-doctor', compact('appointment'), function ($message) use ($doctorEmail, $subject, $pdfContent, $attachmentName) {
+                    $message->to($doctorEmail)
+                        ->subject($subject)
+                        ->attachData($pdfContent, $attachmentName, ['mime' => 'application/pdf']);
+                });
+            }
+
+        } catch (\Exception $e) {
+            Log::error("Error enviando emails de cita: " . $e->getMessage());
+        }
 
         return redirect()->route('admin.appointments.index')->with('swal', [
             'icon' => 'success',
@@ -294,7 +329,26 @@ class AppointmentController extends Controller
             $appointment->patient->notify(new \App\Notifications\ConsultationCompletedWhatsApp($appointment));
         } catch (\Exception $e) {
             // No bloqueamos el flujo si falla el envío de notificación
-            \Log::error("Error enviando receta WhatsApp: " . $e->getMessage());
+            Log::error("Error enviando receta WhatsApp: " . $e->getMessage());
+        }
+
+        // Enviar Receta por Email con PDF
+        try {
+            $patientEmail = $appointment->patient->user->email;
+            if ($patientEmail) {
+                $pdf = Pdf::loadView('emails.appointments.prescription-pdf', compact('appointment'));
+                $pdfContent = $pdf->output();
+
+                Mail::send('emails.appointments.prescription', compact('appointment'), function ($message) use ($patientEmail, $appointment, $pdfContent) {
+                    $message->to($patientEmail)
+                        ->subject("Receta Médica - Cita #" . $appointment->id)
+                        ->attachData($pdfContent, "receta-medica-{$appointment->id}.pdf", [
+                            'mime' => 'application/pdf',
+                        ]);
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error("Error enviando email de receta: " . $e->getMessage());
         }
 
         return redirect()->route('admin.appointments.index')->with('swal', [
