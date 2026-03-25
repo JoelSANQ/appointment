@@ -14,16 +14,24 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        //Crear un usuario de prueba cada que se ejecuten migraciones
-        //php artisan migrate:fresh --seed
+        // 1. Crear Administrador
+        User::factory()->create([
+            'name' => 'Admin Sistema',
+            'email' => 'admin@example.com',
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'id_numero' => '0000000001',
+            'phone' => '000-000-0000',
+            'address' => 'Oficina Central',
+        ])->assignRole('Administrador');
+
+        // 2. Crear Doctor Joel
         User::factory()->create([
             'name' => 'Joel Sanchez',
             'email' => 'joel@example.com',
-            'password' => bcrypt('12345678'),
+            'password' => \Illuminate\Support\Facades\Hash::make('12345678'),
             'id_numero' => '1234567890',
             'phone' => '123-456-7890',
-            'address' => 'MAXCANU city', 
-            // Asignar el ID del rol correspondiente
+            'address' => 'MAXCANU city',
         ])->assignRole('Doctor');
     }
 }
